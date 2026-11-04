@@ -1,0 +1,8 @@
+node_modules/
+__pycache__/
+*.pyc
+electron/smoke-result.json
+
+.venv-build/
+build/
+dist/

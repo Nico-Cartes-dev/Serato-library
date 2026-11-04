@@ -1,0 +1,62 @@
+{
+  "name": "serato-library",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Organizador de bibliotecas Serato",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check electron/main.js && node --check electron/preload.js && node --check electron/renderer.js",
+    "dev": "electron . --dev",
+    "build:backend": ".venv-build\\Scripts\\python.exe -m PyInstaller --noconfirm --clean --onedir --console --name serato-backend --distpath build/backend --workpath build/pyinstaller --specpath build backend.py",
+    "dist": "npm run check && npm run build:backend && electron-builder --win nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "45.2.2",
+    "electron-builder": "26.18.0"
+  },
+  "productName": "Serato Library",
+  "build": {
+    "appId": "local.seratolibrary.desktop",
+    "productName": "Serato Library",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/main.js",
+      "electron/preload.js",
+      "electron/renderer.js",
+      "electron/index.html",
+      "electron/style.css",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build/backend/serato-backend",
+        "to": "backend"
+      }
+    ],
+    "electronDist": "node_modules/electron/dist",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false,
+      "artifactName": "Serato-Library-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": false
+    }
+  }
+}

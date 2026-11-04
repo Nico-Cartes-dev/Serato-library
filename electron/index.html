@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'"><title>Serato Library</title><link rel="stylesheet" href="style.css"></head>
+<body><main>
+<header><div class="brand">S<span> / LIBRARY STUDIO</span></div><button id="help">Cómo funciona</button></header>
+<section class="intro"><div class="eyebrow">TU COLECCIÓN, EN ORDEN</div><h1>Prepara tu próxima sesión.</h1><p>Agrega tu música a Serato conservando la biblioteca existente.</p></section>
+<section id="guide" class="card guide">
+<div class="eyebrow">ANTES DE EMPEZAR</div><h2 tabindex="-1">Tu biblioteca, paso a paso</h2>
+<p>Organiza tu música en Serato a partir de las carpetas de tu disco.</p>
+<ol class="guide-steps">
+<li><strong>Elige el disco</strong><p>Conecta tu disco y selecciona dónde está tu colección.</p></li>
+<li><strong>Selecciona las carpetas</strong><p>Marca lo que quieres agregar. Sus subcarpetas se convertirán en crates. Desmarcar no elimina lo que ya tienes.</p></li>
+<li><strong>Revisa el resumen</strong><p>Primero analizamos la selección sin escribir. Verás las pistas nuevas y los crates que se procesarán.</p></li>
+<li><strong>Confirma y genera</strong><p>Cierra Serato. Crearemos un respaldo en _Serato_Backup antes de guardar. Mantén el disco conectado hasta que aparezca el aviso de finalización.</p></li>
+</ol>
+<p>No se modifican los archivos de música ni se analizan BPM, cues o beatgrids.</p>
+<label class="sound-option"><input id="sound" type="checkbox" checked> Avisarme con sonido al terminar</label>
+<button id="start" class="primary">Comenzar →</button>
+</section>
+<ol id="stepper" hidden class="steps" aria-label="Pasos"><li id="step-label-1" aria-current="step">1. Disco</li><li id="step-label-2">2. Carpetas</li><li id="step-label-3">3. Resumen y generación</li></ol>
+<section id="step-1" hidden class="card source"><div class="step">01</div><div class="grow"><h2 tabindex="-1">Elige tu disco</h2><p>La biblioteca y los respaldos se guardarán en este origen.</p><div class="row"><select id="drives" aria-label="Discos disponibles"></select><input id="root" placeholder="Selecciona un disco o una carpeta" aria-label="Ruta de origen"><button id="browse">Explorar…</button><button id="refresh">Actualizar discos</button></div></div></section>
+<section id="step-2" hidden><div class="columns"><section class="card"><div class="heading"><div><div class="eyebrow">02 / COLECCIÓN</div><h2 tabindex="-1">Carpetas a incluir</h2></div><span id="count" class="badge">0 seleccionadas</span></div><p>Se incluyen sus subcarpetas. Desmarcar una carpeta no elimina sus pistas ni sus crates existentes.</p><div class="links"><button id="all">Seleccionar todas</button><button id="none">Quitar selección</button><button id="reload-folders">Actualizar carpetas</button></div><div id="folders" class="folders"></div></section>
+<section class="card"><h2>Preferencias</h2><div class="formats"><label><input type="checkbox" id="audio" checked> Audio</label><label><input type="checkbox" id="video" checked> Video</label></div><div id="exclusions-title">Carpetas excluidas</div><p>Marca las carpetas que quieres excluir. Actualiza las carpetas después de cambiar las exclusiones.</p><div id="exclusions" class="exclusions" role="group" aria-labelledby="exclusions-title"></div><p>Serato y sus respaldos se excluyen siempre.</p></section></div></section>
+<section id="step-3" class="card" hidden><div class="eyebrow">03 / REVISIÓN</div><h2 tabindex="-1">Revisa antes de generar</h2><p id="review-origin"></p><p id="review-folders"></p><div id="summary" class="summary"></div><p>Se conservarán las pistas existentes y se fusionarán los crates seleccionados. Los archivos de música no se modifican.</p><p>Al generar se vuelve a comprobar el disco; los conteos pueden variar si cambias sus archivos. Cierra Serato antes de continuar.</p></section>
+<div id="wizard-actions" class="wizard-actions" hidden><button id="back" hidden>← Atrás</button><button id="next" class="primary">Continuar →</button><button id="generate" class="primary" hidden>Confirmar y generar →</button></div>
+<section id="completion" class="completion" role="status" aria-live="polite" aria-atomic="true" hidden>
+<div id="completion-icon" class="completion-icon" aria-hidden="true"></div>
+<div><h2 id="completion-title" tabindex="-1"></h2><p id="completion-message"></p></div>
+</section>
+<div id="status" role="status">Lee la guía y pulsa Comenzar.</div><progress id="progress" hidden></progress>
+<details class="card log-panel"><summary>Registro del proceso</summary><pre id="output" aria-label="Registro del proceso"></pre></details>
+<footer>Respaldo automático · Conservación de pistas existentes · Fusión de crates</footer>
+</main><script src="renderer.js"></script></body></html>
