@@ -28,13 +28,9 @@ Ejecuta `python -B -m unittest discover -s tests -v` y `npm run check`.
 
 Antes de escribir se valida y prepara toda la biblioteca. Cada archivo se reemplaza de forma atómica; si falla un reemplazo se intenta restaurar lo ya cambiado. Una desconexión o corte de energía entre archivos puede requerir recuperar el respaldo de `_Serato_Backup`. Cierra también otras instancias de la aplicación antes de generar.
 
-## Consola de desarrollo
+## Registro del proceso
 
-`Abrir_Serato.bat` y `npm run dev` abren la aplicación con DevTools en otra ventana. Selecciona la pestaña Console para ver el registro del motor y los errores. F12 abre o cierra DevTools. `npm start` inicia sin abrir la consola automáticamente.
-
-Para probar datos reales, selecciona el origen y usa primero **Revisar resumen**. La simulación no modifica archivos.
-
-Los diagnósticos de Console incluyen tiempos, operación, origen, selección, fases del motor y detalles de errores de Python. Los avances del escaneo se limitan a un aviso cada dos segundos. Se muestran localmente en consola; no se crea un archivo de logs.
+La aplicación no abre herramientas de desarrollador ni emite logs de consola. Los avances y errores del motor siguen disponibles en Registro del proceso dentro de la aplicación.
 
 ## Guía y avisos
 
@@ -42,7 +38,7 @@ Al abrir se muestra una guía; pulsa Comenzar para elegir el disco. Puedes volve
 
 ## Crear el instalador de Windows
 
-El instalador `dist/Serato-Library-Setup-1.0.0.exe` incluye Electron y el motor Python. El equipo donde se instala no necesita Node.js ni Python. Es para Windows x64, se instala por usuario y permite elegir carpeta y crear accesos directos. F12 permite consultar la consola también en la versión instalada.
+El instalador `dist/Serato-Library-Setup-1.0.1.exe` incluye Electron y el motor Python. El equipo donde se instala no necesita Node.js ni Python. Es para Windows x64, se instala por usuario y permite elegir carpeta y crear accesos directos.
 
 Para recompilar desde el código, con Node.js y Python 3.14 x64 instalados:
 

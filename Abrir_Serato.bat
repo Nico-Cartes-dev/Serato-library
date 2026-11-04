@@ -5,6 +5,6 @@ if not exist node_modules\electron\cli.js (
   pause
   exit /b 1
 )
-call npm run dev
+call npm start
 if errorlevel 1 pause
 

@@ -3,9 +3,8 @@ let locked = false;
 let step = 0;
 let audio = null;
 let reviewed = null;
-window.serato.onDiagnostic(entry => console[entry.level === 'error' ? 'error' : 'info'](`[${entry.time}] ${entry.message}`, entry.details));
-window.addEventListener('error', event => console.error('[Interfaz] Error no controlado', event.error || event.message));
-window.addEventListener('unhandledrejection', event => console.error('[Interfaz] Promesa rechazada', event.reason));
+window.addEventListener('error', event => status(event.error?.message || event.message || 'Ocurrió un error en la interfaz.', true));
+window.addEventListener('unhandledrejection', event => status(event.reason?.message || 'No se pudo completar la operación.', true));
 const exclusions = () => [...document.querySelectorAll('#exclusions input:checked')].map(input => input.value);
 function renderExclusions(names) {
   $('exclusions').replaceChildren();
@@ -17,14 +16,14 @@ function renderExclusions(names) {
     label.append(input, document.createTextNode(name)); $('exclusions').append(label);
   }
 }
-function status(text, error = false) { if (error) console.error('[Serato]', text); $('status').textContent = text; $('status').classList.toggle('error', error); }
+function status(text, error = false) { $('status').textContent = text; $('status').classList.toggle('error', error); }
 function lock(value) { locked = value; document.querySelectorAll('button,input,select,textarea').forEach(x => x.disabled = value || x.dataset.required === 'true'); $('progress').hidden = !value; }
 function prepareSound() {
   if (!$('sound').checked) return;
   try {
     audio ??= new AudioContext();
-    audio.resume().catch(error => console.warn('[Sonido] No se pudo activar', error));
-  } catch (error) { console.warn('[Sonido] No disponible', error); }
+    audio.resume().catch(() => { $('sound').title = 'No se pudo activar el sonido. Los avisos visuales siguen disponibles.'; });
+  } catch { $('sound').title = 'El sonido no está disponible. Los avisos visuales siguen disponibles.'; }
 }
 function notifyCompletion(title, message, error = false) {
   $('completion').hidden = false;
@@ -48,7 +47,7 @@ function notifyCompletion(title, message, error = false) {
       oscillator.onended = () => { oscillator.disconnect(); volume.disconnect(); };
       oscillator.start(time); oscillator.stop(time + 0.17);
     });
-  } catch (soundError) { console.warn('[Sonido] No se pudo reproducir', soundError); }
+  } catch { $('sound').title = 'No se pudo reproducir el sonido. Los avisos visuales siguen disponibles.'; }
 }
 function count() { $('count').textContent = `${document.querySelectorAll('#folders input:checked').length} seleccionadas`; }
 function showStep(value) {
@@ -75,7 +74,6 @@ async function loadFolders() {
   $('folders').replaceChildren(); count();
   try {
     const { folders } = await window.serato.folders({ root: $('root').value.trim(), exclusions: exclusions() });
-    console.info('[Carpetas] Origen cargado', { root: $('root').value.trim(), available: folders.length });
     for (const name of folders) {
       const label = document.createElement('label'); label.className = 'folder';
       const input = document.createElement('input'); input.type = 'checkbox'; input.checked = true; input.value = name; input.addEventListener('change', count);
@@ -96,7 +94,7 @@ $('root').onchange = () => { reviewed = null; };
 $('drives').onchange = () => { $('root').value = $('drives').value; reviewed = null; };
 $('all').onclick = () => { document.querySelectorAll('#folders input').forEach(x => x.checked = true); count(); };
 $('none').onclick = () => { document.querySelectorAll('#folders input').forEach(x => x.checked = false); count(); };
-window.serato.onProgress(message => { console.info(`[${new Date().toISOString()}] [Serato]`, message); $('output').append(document.createTextNode(message + '\n')); $('output').scrollTop = $('output').scrollHeight; });
+window.serato.onProgress(message => { $('output').append(document.createTextNode(message + '\n')); $('output').scrollTop = $('output').scrollHeight; });
 function selection() {
   const excluded = exclusions();
   return { root: $('root').value.trim(), folders: [...document.querySelectorAll('#folders input:checked')].map(x => x.value).filter(name => !excluded.includes(name.toLowerCase())), exclusions: excluded, audio: $('audio').checked, video: $('video').checked };
@@ -118,7 +116,6 @@ async function review() {
   if (!config.folders.length || (!config.audio && !config.video)) { status('Selecciona al menos una carpeta y un tipo de archivo.', true); return; }
   lock(true); $('output').textContent = ''; status('Analizando tu selección sin modificar archivos…');
   try {
-    console.info('[Biblioteca] Revisar selección', config);
     const result = await window.serato.run({ ...config, simulate: true });
     renderSummary(result.summary);
     reviewed = config;
@@ -159,7 +156,6 @@ async function loadDrives(initial) {
   lock(true);
   try {
     const data = await window.serato.drives();
-    console.info('[Discos] Disponibles', data.drives);
     const current = $('root').value;
     $('drives').replaceChildren();
     for (const drive of data.drives) { const option = document.createElement('option'); option.value = drive; option.textContent = drive; $('drives').append(option); }

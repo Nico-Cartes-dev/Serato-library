@@ -10,7 +10,7 @@ const document = {
   createTextNode: text => text,
   querySelectorAll: selector => selector === '#exclusions input:checked' ? inputs().filter(input => input.checked) : inputs()
 };
-const context = vm.createContext({ document, window: { serato: { onDiagnostic() {} }, addEventListener() {} } });
+const context = vm.createContext({ document, window: { addEventListener() {} } });
 const source = fs.readFileSync('electron/renderer.js', 'utf8').split('function count()')[0];
 vm.runInContext(source + `
 renderExclusions(['cosas', '_serato_', '_serato_backup']);

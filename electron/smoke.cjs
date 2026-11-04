@@ -10,9 +10,6 @@ app.whenReady().then(() => {
   const win = BrowserWindow.getAllWindows()[0];
   win.webContents.once('did-finish-load', async () => {
     try {
-      if (process.argv.includes('--dev') && !win.webContents.isDevToolsOpened()) {
-        await new Promise(resolve => win.webContents.once('devtools-opened', resolve));
-      }
       const result = await win.webContents.executeJavaScript(`(async () => {
         const drives = await window.serato.drives();
         return { title: document.title, bridge: !!window.serato, drives: drives.drives.length, controls: !!document.getElementById('generate') };
@@ -46,7 +43,8 @@ app.whenReady().then(() => {
       })()`);
       if (fs.existsSync(path.join(fixture, '_Serato_'))) throw new Error('La revisión escribió archivos');
       result.devTools = win.webContents.isDevToolsOpened();
-      if (process.argv.includes('--dev') && !result.devTools) throw new Error('DevTools no se abrió.');
+      win.webContents.openDevTools();
+      if (win.webContents.isDevToolsOpened()) throw new Error('DevTools debe estar deshabilitado.');
       if (!result.bridge || !result.drives || !result.controls) throw new Error(JSON.stringify(result));
       require('node:fs').writeFileSync(require('node:path').join(__dirname, 'smoke-result.json'), JSON.stringify(result)); console.log('SMOKE_OK ' + JSON.stringify(result));
       fs.rmSync(fixture, { recursive: true, force: true });
